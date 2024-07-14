@@ -1,0 +1,11 @@
+[binaries]
+c = 'm68k-elf-gcc'
+as = 'm68k-elf-as'
+ld = 'm68k-elf-ld'
+strip = 'm68k-elf-strip'
+
+[host_machine]
+system = 'none'
+cpu_family = 'm68k'
+cpu = 'm68k'
+endian = 'big'

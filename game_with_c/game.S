@@ -1,4 +1,5 @@
 #include "md.h"
+#include "md_macro.h"
 
 .equ 	VDP_plane_a_base,	0xc000
 .equ 	VDP_plane_b_base,	0xe000

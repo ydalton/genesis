@@ -14,41 +14,6 @@ extern LONG letter_r[TILE_LENGTH];
 extern LONG letter_d[TILE_LENGTH];
 extern LONG letter_exclamation_point[TILE_LENGTH];
 
-#define str(s) #s
-#define xstr(s) str(s)
-
-static inline void VDP_write_ctrl(LONG val)
-{
-	asm volatile ("move.l %0, " xstr(VDP_ctrl)
-			:
-			: "d" (val));
-}
-
-static inline void VDP_write_l_data(LONG val)
-{
-	//*((LONG *) data) = val;
-	asm volatile ("move.l %0, " xstr(VDP_data)
-			:
-			: "d" (val));
-}
-
-static inline void VDP_write_w_data(WORD val)
-{
-	asm volatile ("move.w %0, " xstr(VDP_data)
-			:
-			: "r" (val));
-}
-
-static inline void VDP_write_b_data(BYTE val)
-{
-	asm volatile ("move.b %0, " xstr(VDP_data)
-			:
-			: "r" (val));
-}
-
-#undef xstr
-#undef str
-
 void VDP_load_tile(WORD tileno, LONG *tile)
 {
 	BYTE i = 0;
