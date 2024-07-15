@@ -63,8 +63,8 @@ static vdp_tile_t letter_r = {
 	0x11000110,
 	0x11111100,
 	0x11110000,
-	0x11011000,
-	0x11000110,
+	0x22022000,
+	0x22000220,
 	0x00000000
 };
 
@@ -90,10 +90,10 @@ static vdp_tile_t letter_exclamation_point = {
 	0x00010000,
 };
 
-vdp_palette_t palette = {
+static vdp_palette_t palette = {
 	0x000,
 	0xeee,
-	0x000,
+	0xe00,
 	0x000,
 	0x000,
 	0x000,
@@ -127,10 +127,10 @@ static WORD vdp_registers[] = {
 	VDP_REG_WIN_Y | 0X00,
 };
 
-static inline void load_vdp_registers()
+void load_vdp_registers()
 {
-	for(WORD i = 0; i < ARRLEN(vdp_registers); i++) {
-		VDP_write_ctrl(vdp_registers[i]);
+	for(BYTE i = 0; i < ARRLEN(vdp_registers); i++) {
+		VDP_set_reg(vdp_registers[i]);
 	}
 }
 
@@ -182,32 +182,36 @@ static WORD letter_index[] = {
 	0x8				/* ! */
 };
 
-static vdp_tile_t *tiles[] = {
-	&letter_h,
-	&letter_e,
-	&letter_l,
-	&letter_o,
-	&letter_w,
-	&letter_r,
-	&letter_d,
-	&letter_exclamation_point
-};
+vdp_tile_t gen;
+
+void _hblank_callback()
+{
+}
+
+void _vblank_callback()
+{
+	static LONG i = 0;
+	if(i % 2 == 0) {
+		gen[0] = 0x11000000;
+	} else {
+		gen[0] = 0x00011000;
+	}
+	i++;
+}
 
 void _main(void)
 {
 	BYTE i;
-	
+
 	load_vdp_registers();
 	clear_vram();
 
 	VDP_load_palette(0, palette);
 
-	for(i = 0; i < 8; i++) {
-		VDP_load_tile(i + 1, *tiles[i]);
-	}
+	VDP_load_tile(0, gen);
 
 	VDP_write_ctrl(SET_VRAM_ADDR(0xc000));
-	for(i = 0; i < ARRLEN(letter_index); i++) {
-		VDP_write_w_data(letter_index[i]);
+	for(i = 0; i < 4; i++) {
+		VDP_write_w_data(1);
 	}
 }

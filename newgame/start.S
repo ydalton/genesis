@@ -66,7 +66,6 @@ _interrupt:
 
 _start:
 	jsr disable_tmss
-
 	move.w #0x2300, %sr
 
 	jsr _main
@@ -74,17 +73,25 @@ _start:
 Lforever:
 	trap #0
 	bra.s Lforever
+	nop
+	nop
+	nop
 
 disable_tmss:
 	move.b (0xa10001), %d0
 	and.b %d0, 0x0f
-	beq .L2
+	beq Lno_tmss
 	move.l #SEGA_MAGIC, (0xa14000)
-.L2:
+Lno_tmss:
 	tst.w (VDP_CTRL)
 	rts
+	nop
+	nop
+	nop
 
 _hblank:
+	jsr _hblank_callback
 	rte
 _vblank:
+	jsr _vblank_callback
 	rte

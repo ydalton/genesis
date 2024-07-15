@@ -57,9 +57,18 @@
 #define SET_CRAM_ADDR(addr) 	SET_XRAM_ADDR(addr, VDP_CRAM_ADDR)
 #define SET_VSRAM_ADDR(addr) 	SET_XRAM_ADDR(addr, VDP_VSRAM_ADDR)
 
+#define SPRITE_SIZE(w, h) (((w-1) & 0x3) << 2 || ((h-1) & 0x3))
+
 static inline void VDP_write_ctrl(LONG val)
 {
-	asm volatile ("move.l %0, " xstr(VDP_CTRL)
+	asm volatile ("move.l %0, (" xstr(VDP_CTRL) ")"
+			:
+			: "d" (val));
+}
+
+static inline void VDP_set_reg(WORD val)
+{
+	asm volatile ("move.w %0, (" xstr(VDP_CTRL) ")"
 			:
 			: "d" (val));
 }

@@ -1,25 +1,25 @@
-#include "md.h"
+#include "md/md.h"
 
 #define ARRLEN(x) (sizeof(x)/sizeof(*x))
 
 #define NOINLINE __attribute__((noinline))
 
 /* Declared in game.S */
-extern LONG letter_h[TILE_LENGTH];
-extern LONG letter_e[TILE_LENGTH];
-extern LONG letter_l[TILE_LENGTH];
-extern LONG letter_o[TILE_LENGTH];
-extern LONG letter_w[TILE_LENGTH];
-extern LONG letter_r[TILE_LENGTH];
-extern LONG letter_d[TILE_LENGTH];
-extern LONG letter_exclamation_point[TILE_LENGTH];
+extern vdp_tile_t letter_h;
+extern vdp_tile_t letter_e;
+extern vdp_tile_t letter_l;
+extern vdp_tile_t letter_o;
+extern vdp_tile_t letter_w;
+extern vdp_tile_t letter_r;
+extern vdp_tile_t letter_d;
+extern vdp_tile_t letter_exclamation_point;
 
 void VDP_load_tile(WORD tileno, LONG *tile)
 {
 	BYTE i = 0;
 
 	VDP_write_ctrl(SET_VRAM_ADDR(tileno << 5));
-	while(i < TILE_LENGTH) {
+	while(i < VDP_TILE_SIZE) {
 		VDP_write_l_data(tile[i++]);
 	}
 }

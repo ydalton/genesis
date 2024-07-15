@@ -1,5 +1,5 @@
-#include "md.h"
-#include "md_macro.h"
+#include "md/md.h"
+#include "md/macro.h"
 
 .equ 	VDP_plane_a_base,	0xc000
 .equ 	VDP_plane_b_base,	0xe000
@@ -109,7 +109,7 @@ load_tile:
 	lsl.w #0x5, %d0
 	set_vram_addr_reg %d0
 
-	lea (VDP_data), %a1
+	lea (VDP_DATA), %a1
 	move.w #0x7, %d1
 L1:
 	move.l (%a0)+, (%a1)
@@ -124,7 +124,7 @@ load_tiles:
 	lsl.w #0x5, %d0
 	set_vram_addr_reg %d0
 
-	lea (VDP_data), %a1
+	lea (VDP_DATA), %a1
 	subq.w #1, %d1
 L4:
 	move.w #0x7, %d2
@@ -143,7 +143,7 @@ load_palette:
 	set_cram_addr_reg %d0
 
 	move.w #8-1, %d1
-	lea VDP_data, %a1
+	lea VDP_DATA, %a1
 L2:
 	move.l (%a0)+, (%a1)
 	dbra %d1, L2
@@ -155,66 +155,67 @@ disable_tmss:
 	beq .L2
 	move.l #SEGA_MAGIC, (0xa14000)
 .L2:
-	tst.w (VDP_ctrl)
+	tst.w (VDP_CTRL)
 	rts
 
 clear_vram:
 	clr %d0
-	lea	(VDP_ctrl), %a0
-	lea	(VDP_data), %a1
+	lea	(VDP_CTRL), %a0
+	lea	(VDP_DATA), %a1
 
-	move.l #VDP_vram_addr, (%a0)
-	move.w #(VDP_vram_size/4)-1, %d1
+	move.l #VDP_VRAM_ADDR, (%a0)
+	move.w #(VDP_VRAM_SIZE/4)-1, %d1
 Lclear_vram:
 	move.l %d0, (%a1)
 	dbf %d1, Lclear_vram
 
-	move.l #VDP_cram_addr, (%a0)
-	move.w #(VDP_cram_size/4)-1, %d1
+	move.l #VDP_CRAM_ADDR, (%a0)
+	move.w #(VDP_CRAM_SIZE/4)-1, %d1
 Lclear_cram:
 	move.l %d0, (%a1)
 	dbf %d1, Lclear_cram
 
-	move.l #VDP_vsram_addr, (%a0)
-	move.w #(VDP_vsram_size/4)-1, %d1
+	move.l #VDP_VSRAM_ADDR, (%a0)
+	move.w #(VDP_VSRAM_SIZE/4)-1, %d1
 Lclear_vsram:
 	move.l %d0, (%a1)
 	dbf %d1, Lclear_vsram
+	rts
 
 load_vdp_registers:
 	clr.l %d0
 	movea.l %d0, %a0
 	move.l #0x3fff, %d1
 
-	lea (VDP_ctrl), %a0
+	lea (VDP_CTRL), %a0
 
-	move.w #(VDP_reg_mode1 | 0x04), (%a0)
-	move.w #(VDP_reg_mode2 | 0x74), (%a0)
-	move.w #(VDP_reg_plane_a | 0x30), (%a0)
-	move.w #(VDP_reg_window | 0x34), (%a0)
-	move.w #(VDP_reg_plane_b | 0x07), (%a0)
-	move.w #(VDP_reg_sprite | 0x78), (%a0)
-	move.w #(VDP_reg_bgcol | 0x00), (%a0)
-	move.w #(VDP_reg_hrate | 0xff), (%a0)
-	move.w #(VDP_reg_mode3 | 0x00), (%a0)
-	move.w #(VDP_reg_mode4 | 0x81), (%a0)
-	move.w #(VDP_reg_hscroll | 0x3d), (%a0)
-	move.w #(VDP_reg_incr | 0x02), (%a0)
-	move.w #(VDP_reg_size | 0x01), (%a0)
-	move.w #(VDP_reg_win_x | 0x00), (%a0)
-	move.w #(VDP_reg_win_y | 0x00), (%a0)
+	move.w #(VDP_REG_MODE1 | 0x04), (%a0)
+	move.w #(VDP_REG_MODE2 | 0x74), (%a0)
+	move.w #(VDP_REG_PLANE_A | 0x30), (%a0)
+	move.w #(VDP_REG_WINDOW | 0x34), (%a0)
+	move.w #(VDP_REG_PLANE_B | 0x07), (%a0)
+	move.w #(VDP_REG_SPRITE | 0x78), (%a0)
+	move.w #(VDP_REG_BGCOL | 0x00), (%a0)
+	move.w #(VDP_REG_HRATE | 0xff), (%a0)
+	move.w #(VDP_REG_MODE3 | 0x00), (%a0)
+	move.w #(VDP_REG_MODE4 | 0x81), (%a0)
+	move.w #(VDP_REG_HSCROLL | 0x3d), (%a0)
+	move.w #(VDP_REG_INCR | 0X02), (%a0)
+	move.w #(VDP_REG_SIZE | 0X01), (%a0)
+	move.w #(VDP_REG_WIN_X | 0x00), (%a0)
+	move.w #(VDP_REG_WIN_Y | 0x00), (%a0)
 
 	rts
 
 z80_load_program:
 	/* reset the Z80 */
-	move.w #0x0, (Z80_reset)
-	move.w #0x100, (Z80_request)
-	move.w #0x100, (Z80_reset)
+	move.w #0x0, (Z80_RESET)
+	move.w #0x100, (Z80_REQUEST)
+	move.w #0x100, (Z80_RESET)
 L3:	
-	btst.b #0, Z80_granted
+	btst.b #0, Z80_GRANTED
 	bne L3 
-	move.l #Z80_ram_base, %a1
+	move.l #Z80_RAM_BASE, %a1
 	
 	/* copy program into Z80 ram */
 	move.b #0x00, (%a1)+
@@ -222,8 +223,8 @@ L3:
 	move.b #0x00, (%a1)+
 	move.b #0x00, (%a1)+
 
-	move.w #0x100, (Z80_reset)
-	move.w #0x0, (Z80_request)
+	move.w #0x100, (Z80_RESET)
+	MOVE.W #0X0, (Z80_REQUEST)
 	rts
 
 _hblank:
@@ -231,11 +232,11 @@ _hblank:
 _vblank:
 #if 0
 	set_vram_addr 0xc000
-	move.w (VDP_data), %d0
+	move.w (VDP_DATA), %d0
 	cmpi.w #0xa, %d0
 	bge L_vblank_out
 	addi.w #1, %d0
-	move.w %d0, (VDP_data)
+	move.w %d0, (VDP_DATA)
 L_vblank_out: 
 #endif
 	rte
